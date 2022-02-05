@@ -1,26 +1,31 @@
 const router = require('express').Router();
 const {
-  addComment,
-  removeComment,
-  addReply,
-  removeReply
+  getAllThought,
+  getThoughtById,
+  createThought,
+  addReaction,
+  updateThought,
+  removeThought,
+  removeReaction,
 } = require('../../controllers/thought-controller');
 
-// /api/comments/<pizzaId>
-router.route('/:userId').post(addComment);
-// need both above and below to delete a comment, because 
-// ..need to know which pizza the comment is from after deleting a comment
-// /api/comments/<pizzaId>/<commentId>
-router
-  .route('/:pizzaId/:commentId')
-  // put route because we are not creating a new reploy resource
-  // ..only updating the existing comment resource
-  .put(addReply)
-  .delete(removeComment);
+router.route('/').get(getAllThought)
 
-// /api/comments/<pizzaId>/<commentId>/<replyId>
-// must create a new route to removeReply because need the id
-// ..of the individual reply, not just its parent
-router.route('/:pizzaId/:commentId/:replyId').delete(removeReply);
+router
+  .route('/:userId')
+  .post(createThought)
+
+router.route('/:thoughtId').get(getThoughtById)
+
+router
+  .route('/:userId/:thoughtId')
+  .put(updateThought)
+  .delete(removeThought)
+  .put(addReaction)
+
+
+router
+  .route('/:userId/:thoughtId/reactionId')
+  .delete(removeReaction);
 
 module.exports = router;
