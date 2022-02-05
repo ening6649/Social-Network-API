@@ -1,59 +1,71 @@
-const { User} = require('../models')
+const { Thought} = require('../models')
 
-const userController = {
-    getAllUser(req, res) {
-        User.find({})
-          .populate({
-            path: 'comments',
-            select: '-__v'
-          })
-          .select('-__v')
+const thoughtController = {
+    getAllThought(req, res) {
+        Thought.find({})
           .sort({ _id: -1 })
-          .then(dbPizzaData => res.json(dbPizzaData))
+          .then(dbThoughtData => res.json(dbThoughtData))
           .catch(err => {
             console.log(err);
             res.sendStatus(400);
           });
       },
 
-    getPizzaById({ params }, res) {
-        Pizza.findOne({ _id: params.id })
+    getThoughtById({ params }, res) {
+        Thought.findOne({ _id: params.id })
           .populate({
             path: 'comments',
             select: '-__v'
           })
           .select('-__v')
-          .then(dbPizzaData => res.json(dbPizzaData))
+          .then(dbThoughtData => res.json(dbThoughtData))
           .catch(err => {
             console.log(err);
             res.sendStatus(400);
           });
     },
-    createPizza({ body }, res) {
-        Pizza.create(body)
-          .then(dbPizzaData => res.json(dbPizzaData))
-          .catch(err => res.json(err));
-    },
-    updatePizza({ params, body }, res) {
-        // runValidtors will validate any new information when updating data 
-        // ..when it s not true, only validate when a user first create a pizza
-        Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
-          .then(dbPizzaData => {
-            if (!dbPizzaData) {
-              res.status(404).json({ message: 'No pizza found with this id!' });
+    createThought({ params,body }, res) {
+        Thought.create(body)
+        .then(({ _id }) => {
+            return Thought.findOneAndUpdate(
+              { _id: params.userId },
+              // push method to add comment's id to the specific pizza we want to update
+              // adds data to an array 
+              // all MongoDB-based functions like push start with $
+              { $push: { thoughts: _id } },
+              { new: true }
+            );
+          })
+          .then(dbUserData => {
+            if (!dbUserData) {
+              res.status(404).json({ message: 'No user found with this id!' });
               return;
             }
-            res.json(dbPizzaData);
+            res.json(dbUserData);
+          })
+          .catch(err => res.json(err));
+    },
+    
+    updateThought({ params, body }, res) {
+        // runValidtors will validate any new information when updating data 
+        // ..when it s not true, only validate when a user first create a thought
+        Thought.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+          .then(dbThoughtData => {
+            if (!dbThoughtData) {
+              res.status(404).json({ message: 'No thought found with this id!' });
+              return;
+            }
+            res.json(dbThoughtData);
           })
           .catch(err => res.json(err));
     },
     
     
-    deletePizza({ params }, res) {
-        Pizza.findOneAndDelete({ _id: params.id })
-          .then(dbPizzaData => res.json(dbPizzaData))
+    deleteThought({ params }, res) {
+        Thought.findOneAndDelete({ _id: params.id })
+          .then(dbThoughtData => res.json(dbThoughtData))
           .catch(err => res.json(err));
     }
 }
 
-module.exports = pizzaController;
+module.exports = thoughtController;

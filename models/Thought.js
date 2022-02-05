@@ -12,7 +12,7 @@ const ReactionSchema = new Schema (
         reactionBody: {
             type: String,
             required: 'no text!',
-            validate: [({ length }) => length <= 280, 'must be between 1 and 280 characters.']
+            validate: [({ length }) => length <= 280, 'must be between 0 and 280 characters.']
         },
         // user puts this in ?
         username: {
@@ -39,8 +39,7 @@ const ThoughtSchema = new Schema (
         thoughtText: {
             type: String,
             required: 'no text!',
-            // >=1 && <=280 ??
-            validate: [({ length }) => length >= 1, 'must be between 1 and 280 characters.']
+            validate: [({ length }) => length <= 280, 'must be less than 280 characters.']
         },
         createdAt: {
             type: Date,
@@ -59,11 +58,11 @@ const ThoughtSchema = new Schema (
     }
 )
 
-UserSchema.virtual('reactionCount').get(function(){
+ThoughtSchema.virtual('reactionCount').get(function(){
     return this.reactions.length; 
 });
 
-// thought???
-const User = model('Thought', ThoughtSchema);
+// thought is just a random name we are giving this parameter
+const Thought  = model('Thought', ThoughtSchema);
 
-module.exports = User; 
+module.exports = Thought; 

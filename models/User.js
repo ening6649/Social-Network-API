@@ -45,7 +45,7 @@ UserSchema.virtual('friendCount').get(function(){
     return this.friends.length; 
 });
 
-// what is this user ?
+// random name givenn to the model parameter
 const User = model('User', UserSchema);
 
 module.exports = User; 
