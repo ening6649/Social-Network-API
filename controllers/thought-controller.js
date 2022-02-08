@@ -29,9 +29,6 @@ const thoughtController = {
         .then(({ _id }) => {
             return Thought.findOneAndUpdate(
               { _id: params.userId },
-              // push method to add comment's id to the specific pizza we want to update
-              // adds data to an array 
-              // all MongoDB-based functions like push start with $
               { $push: { thoughts: _id } },
               { new: true }
             );
