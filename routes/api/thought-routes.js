@@ -10,7 +10,7 @@ const {
 } = require('../../controllers/thought-controller');
 
 router.route('/').get(getAllThought)
-3137927538
+
 router
   .route('/:userId')
   .post(createThought)
@@ -21,11 +21,14 @@ router
   .route('/:userId/:thoughtId')
   .put(updateThought)
   .delete(removeThought)
-  .post(addReaction)
+  // .post(addReaction)
 
+
+  // http://localhost:3001/api/thoughts/61fec4bbf2e01132cb9d6e55/reactions
+router.route('/:thoughtId/reactions').post(addReaction)
 
 router
-  .route('/:userId/:thoughtId/:reactionId')
+  .route('/:thoughtId/reactions/:reactionId')
   .delete(removeReaction);
 
 module.exports = router;
