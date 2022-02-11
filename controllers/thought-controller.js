@@ -1,9 +1,10 @@
 const { Thought, User} = require('../models')
 
+
 const thoughtController = {
     getAllThought(req, res) {
         Thought.find({})
-          .sort({ _id: -1 })
+        //   .sort({ _id: -1 })
           .then(dbThoughtData => res.json(dbThoughtData))
           .catch(err => {
             console.log(err);
@@ -27,7 +28,7 @@ const thoughtController = {
     createThought({ params,body }, res) {
         Thought.create(body)
         .then(({ _id }) => {
-            return Thought.findOneAndUpdate(
+            return User.findOneAndUpdate(
               { _id: params.userId },
               { $push: { thoughts: _id } },
               { new: true }
@@ -46,7 +47,7 @@ const thoughtController = {
     addReaction({ params, body }, res) {
         Thought.findOneAndUpdate(
           // not actually creating a reply document, just updating an existing comment
-          { _id: params.commentId },
+          { _id: params.thoughtId },
           { $push: { reactions: body } },
           { new: true, runValidators: true }
         )
@@ -106,7 +107,7 @@ const thoughtController = {
         )
           .then(dbUserData => res.json(dbUserData))
           .catch(err => res.json(err));
-      }
+    }
 }
 
 module.exports = thoughtController;
